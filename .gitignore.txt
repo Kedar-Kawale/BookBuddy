@@ -1,0 +1,41 @@
+## ---------- .NET / Visual Studio Rules ----------
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio temporary files and settings
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# SQL Server files (We don't want to push the actual DB file)
+*.mdf
+*.ldf
+
+## ---------- Angular / Node / VS Code Rules ----------
+# Dependency directories
+node_modules/
+
+# Build outputs
+/dist/
+/.angular/
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+*.bak

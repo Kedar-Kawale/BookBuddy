@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\BookBuddy.API",
+    "\\BookBuddy.API\\Models",
+    "\\BookBuddy.API\\Models\\Domain"
+  ],
+  "SelectedNode": "\\BookBuddy.API\\Models\\Domain\\Book.cs",
+  "PreviewInSolutionExplorer": false
+}

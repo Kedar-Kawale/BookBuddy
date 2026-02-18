@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookBuddy.API.Models.Domain
 {
     public class User
     {
+        [Key]
         public Guid UserId { get; set; }  //PK as Guid
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;

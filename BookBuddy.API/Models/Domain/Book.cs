@@ -1,7 +1,10 @@
-﻿namespace BookBuddy.API.Models.Domain
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookBuddy.API.Models.Domain
 {
     public class Book
     {
+        [Key]
         public Guid BookId { get; set; }          //PK as Guid
         public String Title { get; set; } = null!;
         public String Author { get; set; } = null!;

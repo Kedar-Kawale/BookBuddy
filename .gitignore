@@ -1,0 +1,10 @@
+.vs/
+[Bb]in/
+[0o]bj/
+**/bin/
+**/obj/
+node_modules/
+.angular/
+dist/
+*.mdf
+*.ldf

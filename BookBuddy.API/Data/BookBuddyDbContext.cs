@@ -18,6 +18,29 @@ namespace BookBuddy.API.Data  // this is nothing but the Organization-"Groups re
         public DbSet<Rentals> Rentalss { get; set; }
         public DbSet<Payments> Paymentss { get; set; }
         public DbSet<Book> Bookss { get; set; }
+        //-------------- seeding data into database below-------------
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Book>().HasData(
+                // 1st book adding for test purpose
+                new Book
+                {
+                    BookId = Guid.NewGuid(),
+                    Title = "Wings of Fire",
+                    Author = "Dr. APJ Abdul kalam",
+                    Category = "AutoBiography",
+                    ISBN = "978-0132350884",
+                    Price = 589,
+                    TotalCopies = 10,
+                    AvailableCopies =7,
+                    PublishedAt = new DateTime(2000, 8, 11),
+                    Popularity = 9,
+                    IsActive = true,
+                    BookAddedAt =DateTime.Now
+                }
+            );
+            base.OnModelCreating(modelBuilder);  // Important!
+        }
     }
 }
 

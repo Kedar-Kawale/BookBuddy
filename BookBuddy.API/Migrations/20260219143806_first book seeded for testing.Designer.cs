@@ -4,6 +4,7 @@ using BookBuddy.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookBuddy.API.Migrations
 {
     [DbContext(typeof(BookBuddyDbContext))]
-    partial class BookBuddyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260219143806_first book seeded for testing")]
+    partial class firstbookseededfortesting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

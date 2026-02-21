@@ -18,6 +18,11 @@ namespace BookBuddy.API.Repositories.Implementation
         public async Task<IEnumerable<Book>> GetAllBookAsync()
         {
           var Result = await _dbContext.Bookss.ToListAsync();   //instead of ToList(), I used ToListAsync() -for    Non-blocking of I/o thread and it enhances "scalability"
+            // upcoming tasks: 
+            // query the database
+            // filtering 
+            // sorting 
+            // pagination
             return(Result);
         }
     }

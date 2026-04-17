@@ -18,6 +18,7 @@ namespace BookBuddy.API.Data  // this is nothing but the Organization-"Groups re
         public DbSet<Rentals> Rentalss { get; set; }
         public DbSet<Payments> Paymentss { get; set; }
         public DbSet<Book> Bookss { get; set; }
+
         //-------------- seeding data into database below-------------
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

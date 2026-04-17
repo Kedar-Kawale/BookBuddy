@@ -23,12 +23,12 @@ namespace BookBuddy.API.Controllers
 
         
         // GET: https://localhost:7258/api/Book
-        [HttpGet]
+        [HttpGet]   
         public async Task<ActionResult<IEnumerable<Book>>> GetAllBook()   // <--here in the controller's methods we do not use the "Async" as the suffix to keep our controller clean and neat.
         {
             var books = await _bookRepository.GetAllBookAsync();
 
-            //Map Domain Models to DTOs
+            //Map Domain Models to DTOs via Foreach loop
            var response = new List<BookResponseDTO>();  // created new empty List obj for DTOs, and stored it into 'response' variable.
 
             foreach(var book in books) // loop through eachb Domain models
@@ -47,6 +47,37 @@ namespace BookBuddy.API.Controllers
                 });                                 
             }
             return Ok(response);    // returning result 
+        }
+
+        //=========================================================================================================
+        //POST : api/Book
+        [HttpPost]
+        public async Task<ActionResult<BookResponseDTO>> CreateBook([FromBody] CreateBookRequestDTO request)
+        {
+            // convert DTO to domain model 
+
+            var book = new Book {
+                   Title = request.Title,
+                   Author = request.Author,
+                   Category = request.Category,
+                   ISBN = request.ISBN,
+                   Price = request.Price,
+                   TotalCopies = request.TotalCopies,
+                   PublishedAt = request.PublishedAt,
+                   AvailableCopies = request.TotalCopies,  // now these below prop are not coming from the User, so we as an Admin assigning them with Users fileds
+                   Popularity = 0,                          // so whenever we received the Book from User , it automatically add these assigned filed with it.
+                   IsActive = true,
+                   BookAddedAt = DateTime.UtcNow
+
+            };
+
+
+
+
+
+
+
+            return ();
         }
     }
 }

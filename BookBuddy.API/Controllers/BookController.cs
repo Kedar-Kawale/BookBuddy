@@ -1,5 +1,6 @@
 ﻿using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Models.DTO;
+using BookBuddy.API.Repositories.Implementation;
 using BookBuddy.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,11 +51,11 @@ namespace BookBuddy.API.Controllers
         }
 
         //=========================================================================================================
-        //POST : api/Book
+        //POST : https://localhost:7258/api/Book
         [HttpPost]
         public async Task<ActionResult<BookResponseDTO>> CreateBook([FromBody] CreateBookRequestDTO request)
         {
-            // convert DTO to domain model 
+            // convert incoming DTO to domain model 
 
             var book = new Book {
                    Title = request.Title,
@@ -64,20 +65,33 @@ namespace BookBuddy.API.Controllers
                    Price = request.Price,
                    TotalCopies = request.TotalCopies,
                    PublishedAt = request.PublishedAt,
+
                    AvailableCopies = request.TotalCopies,  // now these below prop are not coming from the User, so we as an Admin assigning them with Users fileds
                    Popularity = 0,                          // so whenever we received the Book from User , it automatically add these assigned filed with it.
                    IsActive = true,
                    BookAddedAt = DateTime.UtcNow
-
             };
 
 
+           var createdBook = await _bookRepository.CreateBookAsync(book);
+            // now this "createdBook" contains all the values including the generated 'BookId' etc above.
 
+            // Map Domain model to Response DTO
 
+            var response = new BookResponseDTO
+            {
+                BookId = createdBook.BookId,
+                Title = createdBook.Title,
+                 Author = createdBook.Author,
+                 Category = createdBook.Category,
+                 ISBN = createdBook.ISBN,
+                 Price = createdBook.Price,
+                 TotalCopies = createdBook.TotalCopies,
+                AvailableCopies = createdBook.AvailableCopies,
+                 PublishedAt = createdBook.PublishedAt
+            };
 
-
-
-            return ();
+            return Ok(response);
         }
     }
 }

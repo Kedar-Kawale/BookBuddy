@@ -22,6 +22,7 @@ namespace BookBuddy.API.Repositories.Implementation
         public async Task<IEnumerable<Book>> GetAllBookAsync()
         {
           var Result = await _dbContext.Bookss.ToListAsync();   //instead of ToList(), I used ToListAsync() -for    Non-blocking of I/o thread and it enhances "scalability"
+
             // upcoming tasks: 
             // query the database
             // filtering 
@@ -32,19 +33,20 @@ namespace BookBuddy.API.Repositories.Implementation
 
 
     //========================================================================================
-        public async Task<Book> CreateBookAsync(Book book)
+    
+        public async Task<Book> CreateBookAsync(Book brocode)
+            
         {
             //add book to db
-          await _dbContext.Bookss.AddAsync(book); 
+            // formula : _dbContext + collection/DbSet + YOUR_METHODS
+          await _dbContext.Bookss.AddAsync(brocode); 
 
             //save book to db
            await _dbContext.SaveChangesAsync();
 
             //returned saved book
-            return book;    
+            return brocode;    
         }
-
-
 
 
     }

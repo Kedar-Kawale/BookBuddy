@@ -1,4 +1,5 @@
 ﻿using BookBuddy.API.Models.Domain;
+using System.Text.RegularExpressions;
 
 namespace BookBuddy.API.Repositories.Interfaces
 {
@@ -22,10 +23,15 @@ namespace BookBuddy.API.Repositories.Interfaces
 
         //========================================================================================================================
 
-        // Business requirement : user shoud be able to update the book details by its Id.
+        // Business requirement : admin shoud be able to update the book details by its Id.
         Task<Book?> UpdateBookAsync(Guid id, Book book);  // this method has 2 paramenter , needs book id to find the book details and also needs the 'updated book details' to update the book information in the database.
 
+        //========================================================================================================================
 
+        //Business reuirement : admin should be able to delete the book by its Id as well as by Book Name, so creating separate API's
+        Task<Book?> DeleteBookByIdAsync(Guid id);  // this method has only 1 parameter as admin only need to pass the id to fetch the book and then delete
+
+        Task<Book?> DeleteBookByNameAsync(string name); // this method has only 1 parameter as admin only need to pass the 'Name of book' to fetch the book and then delete
     }
 
 

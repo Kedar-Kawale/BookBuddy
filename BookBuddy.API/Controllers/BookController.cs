@@ -168,13 +168,9 @@ namespace BookBuddy.API.Controllers
                 PublishedAt = updatedBook.PublishedAt
 
             };
-
             return Ok(response);
         }
-
         //=========================================================================================================
-
-
     }
 }
 

@@ -30,7 +30,6 @@ namespace BookBuddy.API.Repositories.Implementation
         }
 
         //========================================================================================
-    
         public async Task<Book?> CreateBookAsync(Book brocode)
             
         {
@@ -46,7 +45,6 @@ namespace BookBuddy.API.Repositories.Implementation
         }
 
         //========================================================================================
-
         public async Task<Book?> GetByIdAsync(Guid id)
         {
             
@@ -58,7 +56,6 @@ namespace BookBuddy.API.Repositories.Implementation
         }
 
         //========================================================================================
-
         public async Task<Book?> UpdateBookAsync(Guid id, Book book)
         {
             // first we need to find the book by its id, if not found return null, and then update will happen.
@@ -91,7 +88,45 @@ namespace BookBuddy.API.Repositories.Implementation
         }
 
         //========================================================================================
+        public async Task<Book?> DeleteBookByIdAsync(Guid id)
+        {
+            // find the book by id 
+            var book =  await _dbContext.Bookss.FirstOrDefaultAsync( b => b.BookId == id);
 
 
+            //If book is null → return null.
+
+            if ( book == null)
+            {
+                return null;
+            }
+
+            //if book foudn then Remove the book from DbContext
+
+            _dbContext.Bookss.Remove(book);
+            await _dbContext.SaveChangesAsync();
+
+            // return the deleted book
+            return book;
+        }
+        //========================================================================================
+        public async Task<Book?> DeleteBookByNameAsync(string name)
+        {
+            // find a book by its name 
+            var book = await _dbContext.Bookss.FirstOrDefaultAsync( b => b.Title == name);
+
+            // if book not found then return null
+            if(book == null)
+            {
+                return null;
+            }
+
+            // if book found then delete that book
+            _dbContext.Bookss.Remove(book);
+             await _dbContext.SaveChangesAsync();
+
+            //return the deleted book
+            return book;
+        }
     }
 }

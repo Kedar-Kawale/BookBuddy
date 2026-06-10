@@ -27,6 +27,7 @@ namespace BookBuddy.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetAllBook()   // <--here in the controller's methods we do not use the "Async" as the suffix to keep our controller clean and neat.
         {
+            // call repository to get all books
             var books = await _bookRepository.GetAllBookAsync();
 
             //Map Domain Models to DTOs via Foreach loop
@@ -71,11 +72,11 @@ namespace BookBuddy.API.Controllers
                 IsActive = true,
                 BookAddedAt = DateTime.UtcNow
             };
-
+            // call repository to create book
             var createdBook = await _bookRepository.CreateBookAsync(book);
             // now this "createdBook" contains all the values including the generated 'BookId' etc above.
 
-            // Map Domain model to Response DTO
+            // Map Domain model to Response DTO, because we never return the Domain model directly to the User.
             var response = new BookResponseDTO
             {
                 BookId = createdBook.BookId,
@@ -88,7 +89,6 @@ namespace BookBuddy.API.Controllers
                 AvailableCopies = createdBook.AvailableCopies,
                 PublishedAt = createdBook.PublishedAt
             };
-
             return Ok(response);
         }
 
@@ -128,11 +128,9 @@ namespace BookBuddy.API.Controllers
         //PUT: https://localhost:7258/api/Book/{id}
         [HttpPut]
         [Route("{id:guid}")]
-
         public async Task<ActionResult> UpdateBook([FromRoute] Guid id, UpdateBookRequestDTO requestDTO)
         {
             // convert incoming request DTO to domain model
-
             var book = new Book
             {
                 Title = requestDTO.Title,
@@ -153,7 +151,7 @@ namespace BookBuddy.API.Controllers
                 return NotFound();  // if the book with the given id is not found, return a 404 Not Found response.
             }
 
-            // Map Domain model to Response DTO
+            // Map Domain model to Response DTO, because we never return the Domain model directly to the User.
 
             var response = new BookResponseDTO
             {
@@ -171,6 +169,69 @@ namespace BookBuddy.API.Controllers
             return Ok(response);
         }
         //=========================================================================================================
+
+        //DELETE : https://localhost:7258/api/Book/{id}
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<ActionResult> DeleteBookById([FromRoute] Guid id)
+        {
+            // call repository
+            var deletedBook = await _bookRepository.DeleteBookByIdAsync(id);
+
+            // if null return NotFound()
+
+            if (deletedBook == null)
+            {
+                return NotFound();  // if the book with the given id is not found, return a 404 Not Found response.
+            }
+
+            // Map Domain Model to Response DTO
+
+            var response = new BookResponseDTO
+            {
+                BookId = deletedBook.BookId,
+                Title = deletedBook.Title,
+                Author = deletedBook.Author,
+                Category = deletedBook.Category,
+                ISBN = deletedBook.ISBN,
+                Price = deletedBook.Price,
+                TotalCopies = deletedBook.TotalCopies,
+                AvailableCopies = deletedBook.AvailableCopies,
+                PublishedAt = deletedBook.PublishedAt
+            };
+            // return your deleted book as result
+            return Ok(response);
+        }
+
+        //=========================================================================================================
+
+        //DELETE : https://localhost:7258/api/Book?name={name}
+        [HttpDelete("by-name")]
+        public async Task<ActionResult> DeleteBookByName([FromQuery] string name)
+        {
+            // call repository
+            var deletedBook = await _bookRepository.DeleteBookByNameAsync(name);
+            // if null return NotFound()
+            if (deletedBook == null)
+            {
+                return NotFound();  // if the book with the given name is not found, return a 404 Not Found response.
+            }
+            // Map Domain Model to Response DTO
+            var response = new BookResponseDTO
+            {
+                BookId = deletedBook.BookId,
+                Title = deletedBook.Title,
+                Author = deletedBook.Author,
+                Category = deletedBook.Category,
+                ISBN = deletedBook.ISBN,
+                Price = deletedBook.Price,
+                TotalCopies = deletedBook.TotalCopies,
+                AvailableCopies = deletedBook.AvailableCopies,
+                PublishedAt = deletedBook.PublishedAt
+            };
+            // return your deleted book as result
+            return Ok(response);
+        }
     }
 }
 

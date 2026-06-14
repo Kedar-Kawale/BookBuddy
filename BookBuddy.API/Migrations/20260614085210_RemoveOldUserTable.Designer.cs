@@ -4,6 +4,7 @@ using BookBuddy.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookBuddy.API.Migrations
 {
     [DbContext(typeof(BookBuddyDbContext))]
-    partial class BookBuddyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260614085210_RemoveOldUserTable")]
+    partial class RemoveOldUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,14 +44,6 @@ namespace BookBuddy.API.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -71,9 +66,6 @@ namespace BookBuddy.API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("RegisteredAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -148,10 +140,10 @@ namespace BookBuddy.API.Migrations
                     b.HasData(
                         new
                         {
-                            BookId = new Guid("e0b59cff-9cb2-42bd-9cce-bb6ed9aaae79"),
+                            BookId = new Guid("52223e56-2c88-4a14-a62e-290322ead0ff"),
                             Author = "Dr. APJ Abdul kalam",
                             AvailableCopies = 7,
-                            BookAddedAt = new DateTime(2026, 6, 14, 17, 49, 14, 234, DateTimeKind.Local).AddTicks(2352),
+                            BookAddedAt = new DateTime(2026, 6, 14, 14, 22, 10, 96, DateTimeKind.Local).AddTicks(1056),
                             Category = "AutoBiography",
                             ISBN = "978-0132350884",
                             IsActive = true,

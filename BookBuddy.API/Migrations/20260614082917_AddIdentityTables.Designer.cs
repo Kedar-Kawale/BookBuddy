@@ -4,6 +4,7 @@ using BookBuddy.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookBuddy.API.Migrations
 {
     [DbContext(typeof(BookBuddyDbContext))]
-    partial class BookBuddyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260614082917_AddIdentityTables")]
+    partial class AddIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,14 +44,6 @@ namespace BookBuddy.API.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -71,9 +66,6 @@ namespace BookBuddy.API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("RegisteredAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -148,10 +140,10 @@ namespace BookBuddy.API.Migrations
                     b.HasData(
                         new
                         {
-                            BookId = new Guid("e0b59cff-9cb2-42bd-9cce-bb6ed9aaae79"),
+                            BookId = new Guid("75860764-1497-407b-97e7-e93cd6a3a6f4"),
                             Author = "Dr. APJ Abdul kalam",
                             AvailableCopies = 7,
-                            BookAddedAt = new DateTime(2026, 6, 14, 17, 49, 14, 234, DateTimeKind.Local).AddTicks(2352),
+                            BookAddedAt = new DateTime(2026, 6, 14, 13, 59, 16, 472, DateTimeKind.Local).AddTicks(9419),
                             Category = "AutoBiography",
                             ISBN = "978-0132350884",
                             IsActive = true,
@@ -209,6 +201,48 @@ namespace BookBuddy.API.Migrations
                     b.HasKey("RentalId");
 
                     b.ToTable("Rentalss");
+                });
+
+            modelBuilder.Entity("BookBuddy.API.Models.Domain.User", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PinCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UserRegisteredAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Userss");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -1,8 +1,14 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using BookBuddy.API.Data;
+using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Repositories.Implementation;
 using BookBuddy.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace BookBuddy.API
 {
@@ -18,11 +24,30 @@ namespace BookBuddy.API
             // registering DbContext into Program.cs 
            string connectionString = builder.Configuration.GetConnectionString("BookBuddyConnectionString");
             builder.Services.AddDbContext<BookBuddyDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<BookBuddyDbContext>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+            {
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                };
+            });
+
+
 
             // registering/injecting the services into program.cs 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
-
-
 
 
 
@@ -46,6 +71,7 @@ namespace BookBuddy.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

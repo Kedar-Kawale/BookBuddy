@@ -1,5 +1,4 @@
 ﻿using BookBuddy.API.Models.Domain;
-using System.Text.RegularExpressions;
 
 namespace BookBuddy.API.Repositories.Interfaces
 {
@@ -17,9 +16,10 @@ namespace BookBuddy.API.Repositories.Interfaces
 
         //========================================================================================================================
 
-        // Business requirement : user should be able to find a book by its Id. 
+        // Business requirement : user should be able to find a book by its Id as well as by Book Name, so creating separate API's 
         Task<Book?> GetByIdAsync(Guid id);  // this method has paramenter , needs book id to find the book details.
 
+        Task<Book?> GetByNameAsync(string name);  // this method has paramenter , needs book name to find the book details.
 
         //========================================================================================================================
 
@@ -36,4 +36,3 @@ namespace BookBuddy.API.Repositories.Interfaces
 
 
 }
-    

@@ -1,8 +1,7 @@
 ﻿using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Models.DTO;
-using BookBuddy.API.Repositories.Implementation;
 using BookBuddy.API.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -53,6 +52,7 @@ namespace BookBuddy.API.Controllers
 
         //=========================================================================================================
         //POST : https://localhost:7258/api/Book
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<BookResponseDTO>> CreateBook([FromBody] CreateBookRequestDTO request)
         {
@@ -124,8 +124,47 @@ namespace BookBuddy.API.Controllers
         }
 
         //=========================================================================================================
+        // GET: https://localhost:7258/api/Book/by-name?name=MindSet
+        [HttpGet]
+        [Route("by-name")]
+        public async Task<ActionResult<BookResponseDTO>> GetBookByName([FromQuery] string name)
+        {
+
+            // Validation
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("Book name is required.");
+            }
+
+
+            //Get the book from the repository
+            var book = await _bookRepository.GetByNameAsync(name);
+
+            // Check if book exists, if not return a 404 Not Found response.
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            //convert Domain model to DTO
+            var response = new BookResponseDTO()
+            {
+                BookId = book.BookId,
+                Title = book.Title,
+                Author = book.Author,
+                Category = book.Category,
+                ISBN = book.ISBN,
+                Price = book.Price,
+                TotalCopies = book.TotalCopies,
+                AvailableCopies = book.AvailableCopies,
+                PublishedAt = book.PublishedAt
+            };
+            return Ok(response);
+        }
+        //=========================================================================================================
 
         //PUT: https://localhost:7258/api/Book/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{id:guid}")]
         public async Task<ActionResult> UpdateBook([FromRoute] Guid id, UpdateBookRequestDTO requestDTO)
@@ -171,6 +210,7 @@ namespace BookBuddy.API.Controllers
         //=========================================================================================================
 
         //DELETE : https://localhost:7258/api/Book/{id}
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{id:guid}")]
         public async Task<ActionResult> DeleteBookById([FromRoute] Guid id)
@@ -206,6 +246,7 @@ namespace BookBuddy.API.Controllers
         //=========================================================================================================
 
         //DELETE : https://localhost:7258/api/Book?name={name}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("by-name")]
         public async Task<ActionResult> DeleteBookByName([FromQuery] string name)
         {

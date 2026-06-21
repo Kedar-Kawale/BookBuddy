@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
+
 namespace BookBuddy.API.Controllers
 {
-    // [Route("api/[controller]")]
+
     [Route("api/books")]
     [ApiController]
     public class BookController : ControllerBase
@@ -275,6 +276,29 @@ namespace BookBuddy.API.Controllers
             return Ok(response);
         }
 
+        //=========================================================================================================
+
+        // GET: https://localhost:7258/api/books?page=1&pageSize=20
+        [HttpGet("Catalog")]
+        public async Task<IActionResult> GetBooks([FromQuery] BookCatalogRequestDTO request)
+        {
+            //Call the repository to get the books based on the request parameters
+            var books = await _bookRepository.GetBooksAsync(request);
+
+            //Map Domain Models to DTOs
+            var response = books.Select(book => new BookCatalogResponseDTO
+            {
+                BookId = book.BookId,
+                Title = book.Title,
+                Author = book.Author,
+                Category = book.Category,
+                Price = book.Price,
+                AvailableCopies = book.AvailableCopies
+            });
+
+
+            return Ok(response);
+        }
     }
 }
 

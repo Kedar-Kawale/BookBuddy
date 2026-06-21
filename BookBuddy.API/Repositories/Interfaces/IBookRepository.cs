@@ -1,4 +1,5 @@
 ﻿using BookBuddy.API.Models.Domain;
+using BookBuddy.API.Models.DTO;
 
 namespace BookBuddy.API.Repositories.Interfaces
 {
@@ -32,6 +33,13 @@ namespace BookBuddy.API.Repositories.Interfaces
         Task<Book?> DeleteBookByIdAsync(Guid id);  // this method has only 1 parameter as admin only need to pass the id to fetch the book and then delete
 
         Task<Book?> DeleteBookByNameAsync(string name); // this method has only 1 parameter as admin only need to pass the 'Name of book' to fetch the book and then delete
+
+        //========================================================================================================================
+
+        Task<IEnumerable<Book>> GetBooksAsync(BookCatalogRequestDTO request);
+
+
+
     }
 
 

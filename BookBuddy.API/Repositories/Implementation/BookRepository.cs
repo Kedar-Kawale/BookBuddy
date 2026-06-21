@@ -1,5 +1,6 @@
 ﻿using BookBuddy.API.Data;
 using BookBuddy.API.Models.Domain;
+using BookBuddy.API.Models.DTO;
 using BookBuddy.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -136,6 +137,36 @@ namespace BookBuddy.API.Repositories.Implementation
             return book;
         }
 
+        //========================================================================================
+        public async Task<IEnumerable<Book>> GetBooksAsync(BookCatalogRequestDTO request)
+        {
+            var books = _dbContext.Bookss.AsNoTracking().AsQueryable(); // as this is only readonly Query so using the AsNoTracking() for performance. 
 
+            // Filtering Title
+            if (!string.IsNullOrWhiteSpace(request.Title))
+            {
+                books = books.Where(x => x.Title.Contains(request.Title));
+                // Filtering Author
+
+            }
+            if (!string.IsNullOrWhiteSpace(request.Author))
+            {
+                books = books.Where(x => x.Author.Contains(request.Author));
+            }
+            // Filtering Category
+            if (!string.IsNullOrWhiteSpace(request.Category))
+            {
+                books = books.Where(x => x.Category.Contains(request.Category));
+            }
+
+            //Add pagination now 
+            books = books
+                .OrderBy(b => b.Title)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize);
+
+
+            return await books.ToListAsync();
+        }
     }
 }

@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookBuddy.API.Controllers
 {
-    [Route("api/[controller]")]
+    // [Route("api/[controller]")]
+    [Route("api/books")]
     [ApiController]
     public class BookController : ControllerBase
     {

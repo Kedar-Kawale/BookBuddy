@@ -46,6 +46,7 @@ namespace BookBuddy.API.Controllers
                     Price = book.Price,
                     TotalCopies = book.TotalCopies,
                     AvailableCopies = book.AvailableCopies,
+                    AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable",  // conditional operator to set AvailabilityStatus based on AvailableCopies
                     PublishedAt = book.PublishedAt
                 });
             }
@@ -120,6 +121,7 @@ namespace BookBuddy.API.Controllers
                 Price = book.Price,
                 TotalCopies = book.TotalCopies,
                 AvailableCopies = book.AvailableCopies,
+                AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable",  // conditional operator to set AvailabilityStatus based on AvailableCopies
                 PublishedAt = book.PublishedAt
             };
             return Ok(response);
@@ -159,6 +161,7 @@ namespace BookBuddy.API.Controllers
                 Price = book.Price,
                 TotalCopies = book.TotalCopies,
                 AvailableCopies = book.AvailableCopies,
+                AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable",  // conditional operator to set AvailabilityStatus based on AvailableCopies
                 PublishedAt = book.PublishedAt
             };
             return Ok(response);
@@ -293,10 +296,9 @@ namespace BookBuddy.API.Controllers
                 Author = book.Author,
                 Category = book.Category,
                 Price = book.Price,
-                AvailableCopies = book.AvailableCopies
+                AvailableCopies = book.AvailableCopies,
+                AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable"  // conditional operator to set AvailabilityStatus based on AvailableCopies
             });
-
-
             return Ok(response);
         }
     }

@@ -13,7 +13,7 @@
         public decimal Price { get; set; }
 
         public int AvailableCopies { get; set; }
-
+        public string AvailabilityStatus { get; set; } = string.Empty;
 
     }
 }

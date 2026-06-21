@@ -9,8 +9,8 @@
         public string ISBN { get; set; } = null!;
         public decimal Price { get; set; }
         public int TotalCopies { get; set; }
-        public int AvailableCopies { get; set; }
         public DateTime PublishedAt { get; set; }
-       
+        public int AvailableCopies { get; set; }
+        public string AvailabilityStatus { get; set; } = string.Empty;
     }
 }

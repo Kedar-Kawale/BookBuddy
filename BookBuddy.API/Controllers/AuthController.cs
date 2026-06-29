@@ -121,6 +121,7 @@ namespace BookBuddy.API.Controllers
             //now first create a claims identity for the user. claims are pieces of information about the user that we want to include in the token. for example, we can include the user's email, id, and roles as claims in the token.
             var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Email, user.Email!),
                 };
 

@@ -1,18 +1,18 @@
 ﻿using BookBuddy.API.Models.Domain;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace BookBuddy.API.Data  // this is nothing but the Organization-"Groups related classes together" 
                               //Matches your folder structure
                               //Prevents naming conflicts
-{ 
-        public class BookBuddyDbContext : IdentityDbContext<ApplicationUser>
+{
+    public class BookBuddyDbContext : IdentityDbContext<ApplicationUser>
     {
-            public BookBuddyDbContext(DbContextOptions<BookBuddyDbContext> options) : base(options)  // ← This passes options to parent DbContext
-            {
+        public BookBuddyDbContext(DbContextOptions<BookBuddyDbContext> options) : base(options)  // ← This passes options to parent DbContext
+        {
             //the body can be empty -no other initialization needed.  
-            }
+        }
 
         // below our DbSet prop goes 
         public DbSet<Rentals> Rentalss { get; set; } // Rentalss,Paymentss.. are Prop names. in EF core naming convention we  widely use plural names as per our classes.
@@ -26,18 +26,18 @@ namespace BookBuddy.API.Data  // this is nothing but the Organization-"Groups re
                 // 1st book adding for test purpose
                 new Book
                 {
-                    BookId = Guid.NewGuid(),
+                    BookId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Title = "Wings of Fire",
                     Author = "Dr. APJ Abdul kalam",
                     Category = "AutoBiography",
                     ISBN = "978-0132350884",
                     Price = 589,
                     TotalCopies = 10,
-                    AvailableCopies =7,
+                    AvailableCopies = 7,
                     PublishedAt = new DateTime(2000, 8, 11),
                     Popularity = 9,
                     IsActive = true,
-                    BookAddedAt =DateTime.Now
+                    BookAddedAt = new DateTime(2026, 06, 27)
                 }
             );
             base.OnModelCreating(modelBuilder);  // Important!

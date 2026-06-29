@@ -35,10 +35,11 @@ namespace BookBuddy.API.Repositories.Interfaces
         Task<Book?> DeleteBookByNameAsync(string name); // this method has only 1 parameter as admin only need to pass the 'Name of book' to fetch the book and then delete
 
         //========================================================================================================================
-
         Task<IEnumerable<Book>> GetBooksAsync(BookCatalogRequestDTO request);
 
+        //========================================================================================================================
 
+        Task<RentalPreview> GetRentalPreviewAsync(Guid bookId, SelectRentalPeriodRequestDTO request);
 
     }
 

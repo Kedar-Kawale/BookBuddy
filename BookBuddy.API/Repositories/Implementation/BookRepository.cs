@@ -168,5 +168,54 @@ namespace BookBuddy.API.Repositories.Implementation
 
             return await books.ToListAsync();
         }
+        //========================================================================================
+        public async Task<RentalPreview> GetRentalPreviewAsync(Guid bookId, SelectRentalPeriodRequestDTO request)
+        {
+            var book = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.BookId == bookId);
+
+            //check if book is null
+            if (book == null)
+            {
+                throw new KeyNotFoundException("Book not found.");
+            }
+
+            //Implement Rental Duration Validation
+            var allowedRentalDays = new[] { 7, 15, 20, 30 };
+
+            if (!allowedRentalDays.Contains(request.RentalDays))
+            {
+                throw new ArgumentException("Custom rental durations are not allowed at this time.");
+            }
+
+            //Verify Book Availability
+            if (book.AvailableCopies <= 0)  // If AvailableCopies are less than or equal to 0 then stop the process.
+            {
+                throw new InvalidOperationException("Book is currently unavailable for rental.");
+            }
+            //Calculate Rental Price based on the rental duration {Tiered pricing logic}
+            decimal rentalPrice = request.RentalDays switch
+            {
+                7 => 79,
+                15 => 149,
+                20 => 199,
+                30 => 279,
+                _ => throw new ArgumentException("Invalid rental duration.")
+            };
+
+            //Calculate Expected Return Date and show to User.
+            var expectedReturnDate = DateTime.UtcNow.AddDays(request.RentalDays);
+
+            //Prepare the RentalPreviewResponseDTO to return to the user.
+            return new RentalPreview
+            {
+                BookId = book.BookId,
+                Title = book.Title,
+                RentalDays = request.RentalDays,
+                RentalPrice = rentalPrice,
+                ExpectedReturnDate = expectedReturnDate,
+                AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable"
+            };
+        }
+
     }
 }

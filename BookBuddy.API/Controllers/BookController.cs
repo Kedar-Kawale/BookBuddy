@@ -301,6 +301,50 @@ namespace BookBuddy.API.Controllers
             });
             return Ok(response);
         }
+
+        //=========================================================================================================
+
+
+
+        [HttpPost("{bookId}/rental-preview")]
+        public async Task<ActionResult> GetRentalPreview([FromRoute] Guid bookId, [FromBody] SelectRentalPeriodRequestDTO request)
+        {
+            try
+            {
+                // Call the repository to get the rental preview based on the bookId and rental days
+                var rentalPreview = await _bookRepository.GetRentalPreviewAsync(bookId, request);
+
+
+                //Map Domain Model to DTO
+                var response = new RentalPreviewResponseDTO
+                {
+                    BookId = rentalPreview.BookId,
+                    Title = rentalPreview.Title,
+                    RentalDays = rentalPreview.RentalDays,
+                    RentalPrice = rentalPreview.RentalPrice,
+                    ExpectedReturnDate = rentalPreview.ExpectedReturnDate,
+                    AvailabilityStatus = rentalPreview.AvailabilityStatus
+                };
+
+                // Return the rental preview response
+                return Ok(response);
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
     }
 }
 

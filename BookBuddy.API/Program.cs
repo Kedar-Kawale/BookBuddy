@@ -1,4 +1,5 @@
 
+using BookBuddy.API.Configurations;
 using BookBuddy.API.Data;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Repositories.Implementation;
@@ -21,6 +22,10 @@ namespace BookBuddy.API
 
             // Add services to the container.
             builder.Services.AddControllers();
+            builder.Services.Configure<RazorpaySettings>(builder.Configuration.GetSection("Razorpay"));
+
+
+
 
             // registering DbContext into Program.cs 
             string connectionString = builder.Configuration.GetConnectionString("BookBuddyConnectionString");
@@ -56,6 +61,7 @@ namespace BookBuddy.API
 
             // registering/injecting the services into program.cs 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
 
 

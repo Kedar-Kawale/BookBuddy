@@ -1,6 +1,7 @@
 
 using BookBuddy.API.Configurations;
 using BookBuddy.API.Data;
+using BookBuddy.API.ExceptionHandlers;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Repositories.Implementation;
 using BookBuddy.API.Repositories.Interfaces;
@@ -10,8 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
-
 namespace BookBuddy.API
 {
     public class Program
@@ -62,6 +61,9 @@ namespace BookBuddy.API
             // registering/injecting the services into program.cs 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddProblemDetails();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
 
@@ -96,11 +98,10 @@ namespace BookBuddy.API
             });
 
 
-
             var app = builder.Build();
 
-
-
+            // Register the Global Exception Handler Middleware
+            app.UseExceptionHandler();
 
             // Configure the HTTP request pipeline. | Middleware Pipeline
             if (app.Environment.IsDevelopment())
@@ -109,14 +110,19 @@ namespace BookBuddy.API
                 app.UseSwaggerUI();
             }
 
+            // Redirect HTTP requests to HTTPS
             app.UseHttpsRedirection();
 
+            // Authenticate the incoming request
             app.UseAuthentication();
+
+            // Authorize the authenticated user
             app.UseAuthorization();
 
-
+            // Map API Controllers
             app.MapControllers();
 
+            // Run the Application
             app.Run();
         }
     }

@@ -14,5 +14,7 @@ namespace BookBuddy.API.Models.Domain
         public string? GatewayOrderId { get; set; }  //Stores the Razorpay Order ID created before payment.
         public string? GatewayPaymentId { get; set; } //Stores the Razorpay Payment ID after successful payment.
         public DateTime? PaymentDate { get; set; } //Records when the payment was successfully completed.
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

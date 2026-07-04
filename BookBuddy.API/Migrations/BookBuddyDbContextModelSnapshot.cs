@@ -172,6 +172,9 @@ namespace BookBuddy.API.Migrations
                     b.Property<decimal>("AmountPaid")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("GatewayOrderId")
                         .HasColumnType("nvarchar(max)");
 

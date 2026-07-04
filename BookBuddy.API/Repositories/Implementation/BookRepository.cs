@@ -1,4 +1,5 @@
 ﻿using BookBuddy.API.Data;
+using BookBuddy.API.Exceptions;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Models.DTO;
 using BookBuddy.API.Repositories.Interfaces;
@@ -19,63 +20,73 @@ namespace BookBuddy.API.Repositories.Implementation
         //------------------ Implemented methods below --------------------------
         public async Task<IEnumerable<Book>> GetAllBookAsync()
         {
-            var Result = await _dbContext.Bookss.AsNoTracking().ToListAsync();   //instead of ToList(), I used ToListAsync() -for    Non-blocking of I/o thread and it enhances "scalability"
-                                                                                 // AsNoTracking()  - by this the EF core do not track the "change tracking" for this GET Api only. so the CPU overhead will reduce and memory usage less.
-                                                                                 // upcoming tasks: 
-                                                                                 // query the database
-                                                                                 // filtering 
-                                                                                 // sorting 
-                                                                                 // pagination
-            return (Result);
+            var books = await _dbContext.Bookss.AsNoTracking().ToListAsync();   //instead of ToList(), I used ToListAsync() -for    Non-blocking of I/o thread and it enhances "scalability"
+                                                                                // AsNoTracking()  - by this the EF core do not track the "change tracking" for this GET Api only. so the CPU overhead will reduce and memory usage less.
+                                                                                // upcoming tasks: 
+                                                                                // query the database
+                                                                                // filtering 
+                                                                                // sorting 
+                                                                                // pagination
+            return (books);
         }
 
         //========================================================================================
-        public async Task<Book?> CreateBookAsync(Book brocode)
+        public async Task<Book?> CreateBookAsync(Book newbook)
 
         {
             //add book to db
             // formula : _dbContext + collection/DbSet + YOUR_METHODS
-            await _dbContext.Bookss.AddAsync(brocode);
+            await _dbContext.Bookss.AddAsync(newbook);
 
             //save book to db
             await _dbContext.SaveChangesAsync();
 
             //returned saved book
-            return brocode;
+            return newbook;
         }
 
         //========================================================================================
         public async Task<Book?> GetByIdAsync(Guid id)
         {
 
-            var popat = await _dbContext.Bookss.FindAsync(id);
+            var book = await _dbContext.Bookss.FindAsync(id);
 
-            return popat;         // no need of SaveChangesAsync() because we are just fetching data, not modifying it.
-                                  // FindAsync() is used for fetching data by primary key, and it is more efficient than FirstOrDefaultAsync() when you are searching by primary key.
-                                  // SaveChangesAsync() is used for INSERT/UPDATE/DELETE operations, and it is not needed for SELECT or Reading operations.
+            // no need of SaveChangesAsync() because we are just fetching data, not modifying it.
+            // FindAsync() is used for fetching data by primary key, and it is more efficient than FirstOrDefaultAsync() when you are searching by primary key.
+            // SaveChangesAsync() is used for INSERT/UPDATE/DELETE operations, and it is not needed for SELECT or Reading operations.
+
+            //if popat is null then throw NotFoundException, else return the book.
+            if (book == null)
+            {
+                throw new NotFoundException("Book not found.");
+            }
+            return book;
         }
 
         //========================================================================================
         public async Task<Book?> GetByNameAsync(string name)
         {
-            var Chimni = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.Title.Contains(name));
+            var book = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.Title.Contains(name));
 
-            return Chimni;
+            //if no book found then throw NotFoundException, else return the book.
+            if (book == null)
+            {
+                throw new NotFoundException("Book not found.");
+            }
 
+            return book;
         }
         //========================================================================================
         public async Task<Book?> UpdateBookAsync(Guid id, Book book)
         {
-            // first we need to find the book by its id, if not found return null, and then update will happen.
-
+            // first we need to find the book by its id, if not found throw exception, and then update will happen.
             var existingBook = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.BookId == id);
 
             // now here two cases.
-            // 1. if book is not found then we will return null.
-
+            // 1. if book is not found then we will throw NotFoundException.
             if (existingBook == null)
             {
-                return null;
+                throw new NotFoundException("Book not found.");
             }
 
             // 2. if book is found then we will update the book and save changes to db.
@@ -101,15 +112,14 @@ namespace BookBuddy.API.Repositories.Implementation
             // find the book by id 
             var book = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.BookId == id);
 
-
-            //If book is null → return null.
+            //If book is null → throw NotFoundException.
 
             if (book == null)
             {
-                return null;
+                throw new NotFoundException("Book not found.");
             }
 
-            //if book foudn then Remove the book from DbContext
+            //if book found then Remove the book from DbContext
 
             _dbContext.Bookss.Remove(book);
             await _dbContext.SaveChangesAsync();
@@ -123,10 +133,10 @@ namespace BookBuddy.API.Repositories.Implementation
             // find a book by its name 
             var book = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.Title == name);
 
-            // if book not found then return null
+            // if book not found then throw NotFoundException
             if (book == null)
             {
-                return null;
+                throw new NotFoundException("Book not found.");
             }
 
             // if book found then delete that book
@@ -176,7 +186,7 @@ namespace BookBuddy.API.Repositories.Implementation
             //check if book is null
             if (book == null)
             {
-                throw new KeyNotFoundException("Book not found.");
+                throw new NotFoundException("Book not found.");
             }
 
             //Implement Rental Duration Validation
@@ -184,13 +194,13 @@ namespace BookBuddy.API.Repositories.Implementation
 
             if (!allowedRentalDays.Contains(request.RentalDays))
             {
-                throw new ArgumentException("Custom rental durations are not allowed at this time.");
+                throw new BadRequestException("Custom rental durations are not allowed at this time.");
             }
 
             //Verify Book Availability
             if (book.AvailableCopies <= 0)  // If AvailableCopies are less than or equal to 0 then stop the process.
             {
-                throw new InvalidOperationException("Book is currently unavailable for rental.");
+                throw new ConflictException("Book is currently unavailable for rental.");
             }
             //Calculate Rental Price based on the rental duration {Tiered pricing logic}
             decimal rentalPrice = request.RentalDays switch
@@ -216,6 +226,6 @@ namespace BookBuddy.API.Repositories.Implementation
                 AvailabilityStatus = book.AvailableCopies > 0 ? "Available" : "Unavailable"
             };
         }
-
+        //========================================================================================
     }
 }

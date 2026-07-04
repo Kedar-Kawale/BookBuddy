@@ -60,7 +60,7 @@ namespace BookBuddy.API.Controllers
         public async Task<ActionResult<BookResponseDTO>> CreateBook([FromBody] CreateBookRequestDTO request)
         {
             // convert incoming DTO to domain model 
-            var book = new Book
+            var newbook = new Book
             {
                 Title = request.Title,
                 Author = request.Author,
@@ -76,7 +76,7 @@ namespace BookBuddy.API.Controllers
                 BookAddedAt = DateTime.UtcNow
             };
             // call repository to create book
-            var createdBook = await _bookRepository.CreateBookAsync(book);
+            var createdBook = await _bookRepository.CreateBookAsync(newbook);
             // now this "createdBook" contains all the values including the generated 'BookId' etc above.
 
             // Map Domain model to Response DTO, because we never return the Domain model directly to the User.
@@ -105,11 +105,6 @@ namespace BookBuddy.API.Controllers
             //Get the Book from Repository
             var book = await _bookRepository.GetByIdAsync(id);
 
-            if (book is null)
-            {
-                return NotFound();  // if the book with the given id is not found, return a 404 Not Found response.
-            }
-
             //convert Domain model to DTO
             var response = new BookResponseDTO()
             {
@@ -133,22 +128,14 @@ namespace BookBuddy.API.Controllers
         [Route("by-name")]
         public async Task<ActionResult<BookResponseDTO>> GetBookByName([FromQuery] string name)
         {
-
             // Validation
             if (string.IsNullOrWhiteSpace(name))
             {
                 return BadRequest("Book name is required.");
             }
 
-
             //Get the book from the repository
             var book = await _bookRepository.GetByNameAsync(name);
-
-            // Check if book exists, if not return a 404 Not Found response.
-            if (book is null)
-            {
-                return NotFound();
-            }
 
             //convert Domain model to DTO
             var response = new BookResponseDTO()
@@ -190,11 +177,6 @@ namespace BookBuddy.API.Controllers
             // call the repository to update the book
             var updatedBook = await _bookRepository.UpdateBookAsync(id, book);
 
-            if (updatedBook == null)
-            {
-                return NotFound();  // if the book with the given id is not found, return a 404 Not Found response.
-            }
-
             // Map Domain model to Response DTO, because we never return the Domain model directly to the User.
 
             var response = new BookResponseDTO
@@ -223,15 +205,8 @@ namespace BookBuddy.API.Controllers
             // call repository
             var deletedBook = await _bookRepository.DeleteBookByIdAsync(id);
 
-            // if null return NotFound()
-
-            if (deletedBook == null)
-            {
-                return NotFound();  // if the book with the given id is not found, return a 404 Not Found response.
-            }
 
             // Map Domain Model to Response DTO
-
             var response = new BookResponseDTO
             {
                 BookId = deletedBook.BookId,
@@ -257,11 +232,7 @@ namespace BookBuddy.API.Controllers
         {
             // call repository
             var deletedBook = await _bookRepository.DeleteBookByNameAsync(name);
-            // if null return NotFound()
-            if (deletedBook == null)
-            {
-                return NotFound();  // if the book with the given name is not found, return a 404 Not Found response.
-            }
+
             // Map Domain Model to Response DTO
             var response = new BookResponseDTO
             {
@@ -304,46 +275,25 @@ namespace BookBuddy.API.Controllers
 
         //=========================================================================================================
 
-
-
         [HttpPost("{bookId}/rental-preview")]
         public async Task<ActionResult> GetRentalPreview([FromRoute] Guid bookId, [FromBody] SelectRentalPeriodRequestDTO request)
         {
-            try
+            // Call the repository to get the rental preview based on the bookId and rental days
+            var rentalPreview = await _bookRepository.GetRentalPreviewAsync(bookId, request);
+
+            //Map Domain Model to DTO
+            var response = new RentalPreviewResponseDTO
             {
-                // Call the repository to get the rental preview based on the bookId and rental days
-                var rentalPreview = await _bookRepository.GetRentalPreviewAsync(bookId, request);
+                BookId = rentalPreview.BookId,
+                Title = rentalPreview.Title,
+                RentalDays = rentalPreview.RentalDays,
+                RentalPrice = rentalPreview.RentalPrice,
+                ExpectedReturnDate = rentalPreview.ExpectedReturnDate,
+                AvailabilityStatus = rentalPreview.AvailabilityStatus
+            };
 
-
-                //Map Domain Model to DTO
-                var response = new RentalPreviewResponseDTO
-                {
-                    BookId = rentalPreview.BookId,
-                    Title = rentalPreview.Title,
-                    RentalDays = rentalPreview.RentalDays,
-                    RentalPrice = rentalPreview.RentalPrice,
-                    ExpectedReturnDate = rentalPreview.ExpectedReturnDate,
-                    AvailabilityStatus = rentalPreview.AvailabilityStatus
-                };
-
-                // Return the rental preview response
-                return Ok(response);
-
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(ex.Message);
-            }
+            // Return the rental preview response
+            return Ok(response);
         }
     }
 }

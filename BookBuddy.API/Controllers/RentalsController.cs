@@ -26,33 +26,13 @@ namespace BookBuddy.API.Controllers
         public async Task<ActionResult> RentBook([FromRoute] Guid bookId, [FromBody] RentBookRequestDTO request)
         {
 
-            try
-            {
-                //Extract the logged in User first
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            //Extract the logged in User first
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-                // call the repository 
-                var response = await _rentalRepository.RentBookAsync(bookId, userId, request);
+            // call the repository 
+            var response = await _rentalRepository.RentBookAsync(bookId, userId, request);
 
-                return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-
+            return Ok(response);
         }
 
 

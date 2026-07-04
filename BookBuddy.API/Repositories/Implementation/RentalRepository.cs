@@ -1,5 +1,6 @@
 ﻿using BookBuddy.API.Constants;
 using BookBuddy.API.Data;
+using BookBuddy.API.Exceptions;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Models.DTO;
 using BookBuddy.API.Repositories.Interfaces;
@@ -30,19 +31,19 @@ namespace BookBuddy.API.Repositories.Implementation
             // check if the book exists 
             if (book == null)
             {
-                throw new KeyNotFoundException("Book not found");
+                throw new NotFoundException("Book not found.");
             }
 
             // validate if the book is available for rent
             if (!book.IsActive)
             {
-                throw new InvalidOperationException("This book is currently inactive and cannot be rented.");
+                throw new ConflictException("This book is currently inactive and cannot be rented.");
             }
 
             //validate if the book has available copies
             if (book.AvailableCopies <= 0)
             {
-                throw new InvalidOperationException("This book is currently out of stock and cannot be rented.");
+                throw new ConflictException("This book is currently out of stock and cannot be rented.");
             }
 
             //validate the rental days
@@ -50,7 +51,7 @@ namespace BookBuddy.API.Repositories.Implementation
 
             if (!allowedRentalDays.Contains(request.RentalDays))
             {
-                throw new ArgumentException("Custom rental durations are not allowed at this time.");
+                throw new BadRequestException("Custom rental durations are not allowed at this time.");
             }
 
             //Prevent Duplicate Active Rentals
@@ -81,7 +82,7 @@ namespace BookBuddy.API.Repositories.Implementation
                             15 => 149,
                             20 => 199,
                             30 => 279,
-                            _ => throw new ArgumentException("Invalid rental duration.")
+                            _ => throw new BadRequestException("Invalid rental duration.")
                         };
 
                         existingRental.RentalDays = request.RentalDays;
@@ -120,7 +121,7 @@ namespace BookBuddy.API.Repositories.Implementation
                 15 => 149,
                 20 => 199,
                 30 => 279,
-                _ => throw new ArgumentException("Invalid rental duration.")
+                _ => throw new BadRequestException("Invalid rental duration.")
             };
 
             //Create a new Rental Entity

@@ -1,6 +1,7 @@
 
 using BookBuddy.API.Configurations;
 using BookBuddy.API.Data;
+using BookBuddy.API.Email;
 using BookBuddy.API.ExceptionHandlers;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Repositories.Implementation;
@@ -64,6 +65,7 @@ namespace BookBuddy.API
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddProblemDetails();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 

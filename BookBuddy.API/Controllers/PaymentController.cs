@@ -22,7 +22,6 @@ namespace BookBuddy.API.Controllers
         [HttpPost("checkout/{rentalId:guid}")]
         public async Task<ActionResult> CheckOut(Guid rentalId)
         {
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
@@ -45,9 +44,9 @@ namespace BookBuddy.API.Controllers
 
             return Ok(new
             {
-                Message = "Payment verified successfully."
+                Message = "Payment successful. Your rental has been confirmed.",
+                PaymentId = request.RazorpayPaymentId
             });
         }
-
     }
 }

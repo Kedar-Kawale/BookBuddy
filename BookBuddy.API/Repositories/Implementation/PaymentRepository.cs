@@ -1,6 +1,7 @@
 ﻿using BookBuddy.API.Configurations;
 using BookBuddy.API.Constants;
 using BookBuddy.API.Data;
+using BookBuddy.API.Email;
 using BookBuddy.API.Exceptions;
 using BookBuddy.API.Models.Domain;
 using BookBuddy.API.Models.DTO;
@@ -16,11 +17,13 @@ namespace BookBuddy.API.Repositories.Implementation
         private readonly BookBuddyDbContext _dbContext;
         private readonly RazorpaySettings _razorpaySettings;
         private readonly RazorpayClient _razorpayClient;
+        private readonly IEmailService _emailService;
 
-        public PaymentRepository(BookBuddyDbContext dbContext, IOptions<RazorpaySettings> razorpaySettings)
+        public PaymentRepository(BookBuddyDbContext dbContext, IOptions<RazorpaySettings> razorpaySettings, IEmailService emailService)
         {
             this._dbContext = dbContext;
             this._razorpaySettings = razorpaySettings.Value;
+            this._emailService = emailService;
         }
 
         //-------------------constructor + DI above -----------------------------
@@ -178,17 +181,53 @@ namespace BookBuddy.API.Repositories.Implementation
 
 
             // Find the associated rental
-            var rental = await _dbContext.Rentalss.FirstOrDefaultAsync(r => r.RentalId == payment.RentalId);
+            var rental = await _dbContext.
+                Rentalss.
+                FirstOrDefaultAsync(r => r.RentalId == payment.RentalId);
 
             if (rental == null)
             {
                 throw new NotFoundException("Rental record not found.");
             }
 
+            // Find the associated book
+            var book = await _dbContext.Bookss.FirstOrDefaultAsync(b => b.BookId == rental.BookId);
+
+            //validate if the book exists, if not throw an exception
+            if (book == null)
+            {
+                throw new NotFoundException("Book record not found.");
+            }
+
+            // Find the associated user
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == rental.UserId);
+
+            if (user == null)
+            {
+                throw new NotFoundException("User record not found.");
+            }
+
             // Activate the rental after successful payment
             rental.Status = RentalStatuses.Paid;
 
             await _dbContext.SaveChangesAsync();
+
+
+            var confirmationEmail = new OrderConfirmationEmailDTO
+            {
+                CustomerName = user.FirstName + " " + user.LastName,
+                CustomerEmail = user.Email,
+                BookTitle = book.Title,
+                RentalId = rental.RentalId,
+                PaymentId = payment.GatewayPaymentId,
+                RentalDays = rental.RentalDays,
+                RentalPrice = rental.RentalPrice,
+                RentalDate = payment.PaymentDate ?? throw new InvalidOperationException("Payment date is missing for a successful payment."),
+                ExpectedReturnDate = rental.EndDate ?? throw new InvalidOperationException("Expected return date is missing for the rental.")
+            };
+
+
+            await _emailService.SendOrderConfirmationEmailAsync(confirmationEmail);
 
             //Here nothing to return as our method is void. and repository ends here.
         }

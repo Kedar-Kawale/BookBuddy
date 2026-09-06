@@ -223,7 +223,6 @@ namespace BookBuddy.API.Repositories.Implementation
                 RentalDays = rental.RentalDays,
                 RentalPrice = rental.RentalPrice,
                 RentalDate = payment.PaymentDate ?? throw new InvalidOperationException("Payment date is missing for a successful payment."),
-                ExpectedReturnDate = rental.EndDate ?? throw new InvalidOperationException("Expected return date is missing for the rental.")
             };
 
 

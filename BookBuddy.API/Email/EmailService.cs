@@ -95,10 +95,6 @@ public class EmailService : IEmailService
                     <td>{orderConfirmationEmailDTO.RentalDate:dd MMM yyyy}</td>
                 </tr>
 
-                <tr>
-                    <td><strong>Expected Return Date</strong></td>
-                    <td>{orderConfirmationEmailDTO.ExpectedReturnDate:dd MMM yyyy}</td>
-                </tr>
             </table>
 
             <p>Thank you for choosing BookBuddy.</p>

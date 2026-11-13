@@ -9,6 +9,8 @@ namespace BookBuddy.API.Models.Domain
         public Guid RentalId { get; set; }    //Guid as PK
         public string UserId { get; set; } = string.Empty;     //FK to User
         public Guid BookId { get; set; }   // FK to Book
+
+        public Book? Book { get; set; }    // Navigation property
         public DateTime? StartDate { get; set; }  // Rental starts when the book is delivered to the user
         public DateTime? EndDate { get; set; }  //Due Date
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;  //Used for request expiry.

@@ -1,4 +1,5 @@
-﻿using BookBuddy.API.Models.DTO;
+﻿using BookBuddy.API.Models.Domain;
+using BookBuddy.API.Models.DTO;
 
 namespace BookBuddy.API.Repositories.Interfaces
 {
@@ -8,6 +9,16 @@ namespace BookBuddy.API.Repositories.Interfaces
         //bookId comes from the route.
         //RentalDays comes from RentBookRequestDTO
         //UserId comes from the logged-in user (JWT). so this repository need all of three.
+
+
+        Task<List<Rentals>> GetCurrentRentalsAsync(string userId);
+
+        Task<List<Rentals>> GetRentalHistoryAsync(string userId);
+
+
+
+
+
 
     }
 }

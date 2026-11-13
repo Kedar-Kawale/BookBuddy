@@ -151,5 +151,39 @@ namespace BookBuddy.API.Repositories.Implementation
                 Message = "Rental request created successfully. Proceed to checkout."
             };
         }
+
+
+        public async Task<List<Rentals>> GetCurrentRentalsAsync(string userId)
+        {
+            var activeStatuses = new[]
+            {
+                RentalStatuses.Requested,
+                RentalStatuses.Paid,
+                RentalStatuses.Packed,
+                RentalStatuses.Shipped,
+                RentalStatuses.Delivered
+            };
+
+            return await _dbContext.Rentalss
+                    .Include(r => r.Book)
+                    .Where(r => r.UserId == userId && activeStatuses.Contains(r.Status))
+                    .ToListAsync();
+        }
+
+
+        public async Task<List<Rentals>> GetRentalHistoryAsync(string userId)
+        {
+            var historyStatuses = new[]
+            {
+                RentalStatuses.Returned ,
+                RentalStatuses.Expired
+            };
+
+            return await _dbContext.Rentalss
+                 .Include(r => r.Book)
+                 .Where(r => r.UserId == userId && historyStatuses.Contains(r.Status))
+                 .ToListAsync();
+        }
+
     }
 }
